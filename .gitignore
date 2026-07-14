@@ -1,0 +1,6 @@
+# Never commit credentials. The tokens file is local-only; in CI these come from
+# GitHub Secrets and exist only as env vars for the life of the job.
+.env
+.tokens.json
+__pycache__/
+*.pyc

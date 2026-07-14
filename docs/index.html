@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>nxtlvl Marine — Social Dashboard</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --surface-1: #fcfcfb;
+  --plane: #f9f9f7;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11,11,11,0.10);
+  --good: #006300;
+  --crit: #d03b3b;
+.s-instagram { --c: #2a78d6; }
+.s-youtube { --c: #1baf7a; }
+.s-tiktok { --c: #eda100; }
+.s-facebook { --c: #008300; }
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    --surface-1: #1a1a19;
+    --plane: #0d0d0d;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --muted: #898781;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255,255,255,0.10);
+    --good: #0ca30c;
+    --crit: #e66767;
+.s-instagram { --c: #3987e5; }
+.s-youtube { --c: #199e70; }
+.s-tiktok { --c: #c98500; }
+.s-facebook { --c: #008300; }
+  }
+}
+:root[data-theme="dark"] {
+  --surface-1: #1a1a19;
+  --plane: #0d0d0d;
+  --text-primary: #ffffff;
+  --text-secondary: #c3c2b7;
+  --muted: #898781;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --border: rgba(255,255,255,0.10);
+  --good: #0ca30c;
+  --crit: #e66767;
+.s-instagram { --c: #3987e5; }
+.s-youtube { --c: #199e70; }
+.s-tiktok { --c: #c98500; }
+.s-facebook { --c: #008300; }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 32px 20px 64px;
+  background: var(--plane); color: var(--text-primary);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.wrap { max-width: 940px; margin: 0 auto; }
+header { margin-bottom: 28px; }
+h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: -0.01em; }
+.sub { color: var(--text-secondary); font-size: 13px; margin: 0; }
+h2 { font-size: 15px; margin: 36px 0 12px; letter-spacing: -0.005em; }
+h2 .note { font-weight: 400; color: var(--muted); font-size: 13px; }
+.card {
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px;
+}
+.hero { margin-bottom: 8px; }
+.hero__label { color: var(--text-secondary); font-size: 13px; margin-bottom: 6px; }
+.hero__value { font-size: 52px; font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; }
+.hero__delta { color: var(--text-secondary); font-size: 13px; margin-top: 6px; }
+.delta.up { color: var(--good); font-weight: 600; }
+.delta.down { color: var(--crit); font-weight: 600; }
+.delta-none { color: var(--muted); }
+.grid-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.tile, .panel {
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px;
+}
+.tile__label, .panel__label {
+  display: flex; align-items: center; gap: 7px;
+  color: var(--text-secondary); font-size: 12px; margin-bottom: 8px;
+}
+.tile__value { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; }
+.panel__value { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }
+.tile__value--off { font-size: 15px; font-weight: 500; color: var(--muted); }
+.tile__delta, .panel__delta { color: var(--text-secondary); font-size: 12px; margin-top: 4px; }
+.panel__term { color: var(--muted); font-size: 11px; margin-top: 2px; }
+.tile--off, .panel--off { border-style: dashed; }
+.swatch { width: 9px; height: 9px; border-radius: 2px; background: var(--c, var(--muted)); flex: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px; }
+.legend__item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-secondary); }
+.legend__item--off { color: var(--muted); }
+.legend__item--off .swatch { opacity: 0.35; }
+.chart { width: 100%; height: auto; display: block; overflow: visible; }
+.chart-scroll { overflow-x: auto; }
+.grid { stroke: var(--grid); stroke-width: 1; }
+.tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.line { stroke: var(--c); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.sparkline { stroke: var(--c); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.dot { fill: var(--c); stroke: var(--surface-1); stroke-width: 2; }
+.endlabel { fill: var(--text-secondary); font-size: 11px; font-weight: 600; }
+.spark { width: 100%; height: 36px; margin-top: 10px; display: block; }
+.grid-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.table th, .table td { text-align: right; padding: 7px 10px; border-bottom: 1px solid var(--grid); }
+.table th[scope=row] { text-align: left; font-weight: 400; color: var(--text-secondary); }
+.table thead th { text-align: right; color: var(--muted); font-weight: 500; font-size: 12px; }
+.table thead th:first-child { text-align: left; }
+.table .na { color: var(--muted); }
+details { margin-top: 36px; }
+summary { cursor: pointer; font-size: 14px; font-weight: 600; padding: 6px 0; }
+.table-wrap { overflow-x: auto; margin-top: 12px; }
+.empty { color: var(--muted); font-size: 13px; margin: 24px 0; text-align: center; }
+.banner {
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-left: 3px solid #fab219; border-radius: 8px;
+  padding: 12px 16px; margin-bottom: 20px; font-size: 13px;
+}
+.banner__title { font-weight: 600; margin-bottom: 4px; }
+.banner ul { margin: 0; padding-left: 18px; color: var(--text-secondary); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+footer { margin-top: 40px; color: var(--muted); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>nxtlvl Marine</h1>
+    <p class="sub">Social reach across all platforms · data through 2026-07-14</p>
+  </header>
+
+  
+
+  <div class="card hero">
+    <div class="hero__label">Total followers, all platforms</div>
+    <div class="hero__value">532</div>
+    <div class="hero__delta"><span class="delta-none">Collecting baseline — deltas appear after a few days</span></div>
+  </div>
+
+  <h2>By platform</h2>
+  <div class="grid-tiles"><div class="tile tile--off"><div class="tile__label"><span class="swatch s-instagram"></span>Instagram</div><div class="tile__value tile__value--off">Not connected</div><div class="tile__delta">Add credentials to start tracking</div></div><div class="tile"><div class="tile__label"><span class="swatch s-youtube"></span>YouTube · Subscribers</div><div class="tile__value">532</div><div class="tile__delta"><span class="delta-none">Baseline — no comparison yet</span></div><svg viewBox="0 0 140 36" class="spark" aria-hidden="true"></svg></div><div class="tile tile--off"><div class="tile__label"><span class="swatch s-tiktok"></span>TikTok</div><div class="tile__value tile__value--off">Not connected</div><div class="tile__delta">Add credentials to start tracking</div></div><div class="tile tile--off"><div class="tile__label"><span class="swatch s-facebook"></span>Facebook</div><div class="tile__value tile__value--off">Not connected</div><div class="tile__delta">Add credentials to start tracking</div></div></div>
+
+  <h2>Follower growth</h2>
+  <div class="card">
+    <div class="chart-scroll"><p class="empty">Only one day of data so far. Trend lines appear once the collector has run on at least two different days.</p></div>
+    <div class="legend"><span class="legend__item legend__item--off"><span class="swatch s-instagram"></span>Instagram (not connected)</span><span class="legend__item"><span class="swatch s-youtube"></span>YouTube</span><span class="legend__item legend__item--off"><span class="swatch s-tiktok"></span>TikTok (not connected)</span><span class="legend__item legend__item--off"><span class="swatch s-facebook"></span>Facebook (not connected)</span></div>
+  </div>
+
+  <h2>Views <span class="note">— each platform on its own scale</span></h2>
+  <p class="sub" style="margin-bottom:12px">
+    These are not added together on purpose: YouTube and TikTok report lifetime totals
+    while Instagram and Facebook report a rolling 28-day window. Summing them would
+    produce a number that means nothing.
+  </p>
+  <div class="grid-panels"><div class="panel panel--off"><div class="panel__label"><span class="swatch s-instagram"></span>Instagram</div><div class="panel__value">—</div><div class="panel__term">Views (last 28 days)</div></div><div class="panel"><div class="panel__label"><span class="swatch s-youtube"></span>YouTube</div><div class="panel__value">787.5K</div><div class="panel__term">Views (all time)</div><svg viewBox="0 0 140 36" class="spark" aria-hidden="true"></svg><div class="panel__delta"><span class="delta-none">Baseline</span></div></div><div class="panel panel--off"><div class="panel__label"><span class="swatch s-tiktok"></span>TikTok</div><div class="panel__value">—</div><div class="panel__term">Video views (all time)</div></div><div class="panel panel--off"><div class="panel__label"><span class="swatch s-facebook"></span>Facebook</div><div class="panel__value">—</div><div class="panel__term">Page views (last 28 days)</div></div></div>
+
+  <details>
+    <summary>Table view — every follower number</summary>
+    <div class="table-wrap"><table class="table"><caption class="sr-only">Follower counts by platform and date</caption><thead><tr><th scope="col">Date</th><th>Instagram</th><th>YouTube</th><th>TikTok</th><th>Facebook</th></tr></thead><tbody><tr><th scope="row">2026-07-14</th><td class="na">—</td><td>532</td><td class="na">—</td><td class="na">—</td></tr></tbody></table></div>
+  </details>
+
+  <footer>
+    Built 2026-07-14 02:09 UTC · 1 snapshot on record
+  </footer>
+</div>
+</body>
+</html>
