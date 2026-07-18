@@ -131,6 +131,39 @@
           "views_total": 799091
         }
       }
+    },
+    {
+      "date": "2026-07-18",
+      "platforms": {
+        "facebook": {
+          "error": "not configured",
+          "followers": null,
+          "ok": false,
+          "views_28d": null,
+          "views_total": null
+        },
+        "instagram": {
+          "error": "not configured",
+          "followers": null,
+          "ok": false,
+          "views_28d": null,
+          "views_total": null
+        },
+        "tiktok": {
+          "error": "not configured",
+          "followers": null,
+          "ok": false,
+          "views_28d": null,
+          "views_total": null
+        },
+        "youtube": {
+          "error": null,
+          "followers": 536,
+          "ok": true,
+          "views_28d": null,
+          "views_total": 802076
+        }
+      }
     }
   ]
 }
